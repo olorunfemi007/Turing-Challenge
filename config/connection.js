@@ -1,17 +1,19 @@
 const development = {
-  database: 'databasename',
-  username: 'username',
-  password: 'password',
+  database: 'turing',
+  username: 'root',
+  password: 'root',
+  port: 8889,
   host: 'localhost',
-  dialect: 'sqlite' || 'mysql' || 'postgres',
+  dialect: 'mysql',
 };
 
 const testing = {
-  database: 'databasename',
-  username: 'username',
-  password: 'password',
+  database: 'turing',
+  username: 'root',
+  password: 'root',
+  port: 8889,
   host: 'localhost',
-  dialect: 'sqlite' || 'mysql' || 'postgres',
+  dialect: 'mysql',
 };
 
 const production = {

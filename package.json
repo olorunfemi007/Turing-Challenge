@@ -1,7 +1,7 @@
 {
-  "name": "express-rest-api-boilerplate",
-  "version": "0.0.0",
-  "author": "Lukas Aichbauer <l.aichbauer@gmail.com>",
+  "name": "TuringChallange",
+  "version": "0.0.1",
+  "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -38,11 +38,14 @@
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.2",
+    "core-js": "^2.6.9",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "express-routes-mapper": "^1.0.2",
     "helmet": "^3.12.0",
     "jsonwebtoken": "^8.2.1",
+    "mysql": "^2.17.1",
+    "mysql2": "^1.6.5",
     "sequelize": "^4.37.6",
     "sqlite3": "^4.0.0"
   },

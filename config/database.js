@@ -12,6 +12,7 @@ switch (process.env.NODE_ENV) {
       connection.production.username,
       connection.production.password, {
         host: connection.production.host,
+        port: connection.production.port,
         dialect: connection.production.dialect,
         pool: {
           max: 5,
@@ -27,6 +28,7 @@ switch (process.env.NODE_ENV) {
       connection.testing.username,
       connection.testing.password, {
         host: connection.testing.host,
+        port: connection.testing.port,
         dialect: connection.testing.dialect,
         pool: {
           max: 5,
@@ -42,6 +44,7 @@ switch (process.env.NODE_ENV) {
       connection.development.username,
       connection.development.password, {
         host: connection.development.host,
+        port: connection.development.port,
         dialect: connection.development.dialect,
         pool: {
           max: 5,
