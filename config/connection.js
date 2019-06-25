@@ -1,17 +1,17 @@
 const development = {
-  database: 'turing',
+  database: 'turingchallenge',
   username: 'root',
-  password: 'root',
-  port: 8889,
+  password: 'qwert',
+  port: 3306,
   host: 'localhost',
   dialect: 'mysql',
 };
 
 const testing = {
-  database: 'turing',
+  database: 'turingchallenge',
   username: 'root',
-  password: 'root',
-  port: 8889,
+  password: 'qwert',
+  port: 3306,
   host: 'localhost',
   dialect: 'mysql',
 };

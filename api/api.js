@@ -23,8 +23,8 @@ const environment = process.env.NODE_ENV || 'development';
  */
 const app = express();
 const server = http.Server(app);
-const mappedOpenRoutes = mapRoutes(config.publicRoutes, 'api/controllers/');
-const mappedAuthRoutes = mapRoutes(config.privateRoutes, 'api/controllers/');
+const mappedOpenRoutes = mapRoutes(config.publicRoutes, 'controllers/');
+const mappedAuthRoutes = mapRoutes(config.privateRoutes, 'controllers/');
 const DB = dbService(environment, config.migrate).start();
 
 // allow cross origin requests

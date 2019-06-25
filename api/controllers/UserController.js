@@ -1,20 +1,28 @@
-const User = require('../models/User');
+const Customer = require('../models/Customer');
 const authService = require('../services/auth.service');
 const bcryptService = require('../services/bcrypt.service');
 
-const UserController = () => {
+
+const CustomerController = () => {
   const register = async (req, res) => {
     const { body } = req;
 
     if (body.password === body.password2) {
       try {
-        const user = await User.create({
+        const customer = await Customer.create({
           email: body.email,
           password: body.password,
+          address_1: body.address_1,
+          city: body.city,
+          country: body.country,
+          postal_code: body.postal_code,
+          region: body.region,
+          credit_card: body.credit_card,
         });
-        const token = authService().issue({ id: user.id });
+        console.log(body.password);
+        const token = authService().issue({ id: customer.id });
 
-        return res.status(200).json({ token, user });
+        return res.status(200).json({ token, customer });
       } catch (err) {
         console.log(err);
         return res.status(500).json({ msg: 'Internal server error' });
@@ -29,21 +37,21 @@ const UserController = () => {
 
     if (email && password) {
       try {
-        const user = await User
+        const customer = await Customer
           .findOne({
             where: {
               email,
             },
           });
 
-        if (!user) {
-          return res.status(400).json({ msg: 'Bad Request: User not found' });
+        if (!customer) {
+          return res.status(400).json({ msg: 'Bad Request: Customer not found' });
         }
 
-        if (bcryptService().comparePassword(password, user.password)) {
-          const token = authService().issue({ id: user.id });
+        if (bcryptService().comparePassword(password, customer.password)) {
+          const token = authService().issue({ id: customer.id });
 
-          return res.status(200).json({ token, user });
+          return res.status(200).json({ token, customer });
         }
 
         return res.status(401).json({ msg: 'Unauthorized' });
@@ -70,9 +78,10 @@ const UserController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const users = await User.findAll();
+      const customers = await Customer.findAll();
+      
 
-      return res.status(200).json({ users });
+      return res.status(200).json({ customers });
     } catch (err) {
       console.log(err);
       return res.status(500).json({ msg: 'Internal server error' });
@@ -88,4 +97,4 @@ const UserController = () => {
   };
 };
 
-module.exports = UserController;
+module.exports = CustomerController;
