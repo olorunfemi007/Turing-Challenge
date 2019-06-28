@@ -1,9 +1,17 @@
 const Customer = require('../models/Customer');
 const authService = require('../services/auth.service');
 const bcryptService = require('../services/bcrypt.service');
+const Product = require('../models/Product');
+const Cart = require('../models/Cart');
 
+    const date = Date(Date.now()); 
+    const hr_temp = date.toString();
+    console.log(date + 'time log');
+    const curr_hr = hr_temp.slice(16, 24);
+    console.log(curr_hr + 'time log');
 
 const CustomerController = () => {
+  
   const register = async (req, res) => {
     const { body } = req;
 
@@ -18,6 +26,7 @@ const CustomerController = () => {
           postal_code: body.postal_code,
           region: body.region,
           credit_card: body.credit_card,
+          name: body.name,
         });
         console.log(body.password);
         const token = authService().issue({ id: customer.id });
@@ -88,12 +97,61 @@ const CustomerController = () => {
     }
   };
 
+  const getItem = async (req, res) => {
+    const { name } = req.body;
+    try {
+      const product = await Product.findOne({
+        where: {
+          name,
+        }
+      });
+       if (!product) {
+         return res.status(400).json({ status: 'No Item Found' });
+       } 
+
+      return res.status(200).json({ product });
+    } catch (err) {
+      console.log(err);
+      return res.status(401).json({ status: 'Error' });
+    }
+  };
+
+  const addCart = async (req, res) => {
+    const { name, attributes, quantity, buy_now } = req.body;
+    try {
+      const product = await Product.findOne({
+        where: {
+          name,
+        }
+      });
+       if (!product) {
+         return res.status(400).json({ status: 'No Item Found' });
+       } else {
+         const cart = await Cart.create({
+          //  attribute: attributes,
+           product_id: product.product_id,
+           quantity: quantity,
+           cart_id: product.id,
+           buy_now: buy_now,
+           added_on: curr_hr,
+         });
+         return res.status(200).json({ cart });
+       }
+
+      
+    } catch (err) {
+      console.log(err);
+      return res.status(401).json({ status: 'Error' });
+    }
+  };
 
   return {
     register,
     login,
     validate,
     getAll,
+    getItem,
+    addCart,
   };
 };
 
