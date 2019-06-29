@@ -120,11 +120,30 @@ const CustomerController = () => {
   };
 
   const getAll = async (req, res) => {
+    var { page } = req.body;
+    var pg;
+    var pg_last;
     try {
       const customers = await Customer.findAll();
-      
+      if (customers.length > 10){                           // this is to support paging (10 records per page)
+        if (page == 1){
+            pg = 0;
+            pg_last = 10;
+        }
+        else {
+          page = page - 1;
+          pg = page * 10;
+          pg_last = pg + 10;
+        }
+        // console.log('log.. ' + pg + pg_last + 'log............');
+        var cust_rec = customers.slice(pg, pg_last);
+        return res.status(200).json({ cust_rec });
+      } else {
+        return res.status(200).json({ customers });
+      }
 
-      return res.status(200).json({ customers });
+
+      
     } catch (err) {
       console.log(err);
       return res.status(500).json({ msg: 'Internal server error' });
