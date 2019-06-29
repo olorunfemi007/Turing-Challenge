@@ -3,12 +3,16 @@ const authService = require('../services/auth.service');
 const bcryptService = require('../services/bcrypt.service');
 const Product = require('../models/Product');
 const Cart = require('../models/Cart');
+const Category = require('../models/Category');
+const Prod_cat = require('../models/Prod_cat');
 
     const date = Date(Date.now()); 
     const hr_temp = date.toString();
     console.log(date + 'time log');
     const curr_hr = hr_temp.slice(16, 24);
     console.log(curr_hr + 'time log');
+    var i;
+    var output_prod = [];
 
 const CustomerController = () => {
   
@@ -71,6 +75,36 @@ const CustomerController = () => {
     }
 
     return res.status(400).json({ msg: 'Bad Request: Email or password is wrong' });
+  };
+
+  const updateProfile = async (req, res) => {
+      const {email, name, region, country} = req.body;
+  
+      try{
+        const customer = await Customer
+        .findOne({
+          where: {
+            email,
+          },
+        });
+        if (!customer){
+          return res.status(401).json({status:'No record found'});
+        }
+        else{
+          const cust = await Customer
+        .update({
+          name:country,
+          region:region,
+        },
+        {
+          where: { email:email }
+        });
+        return res.status(200).json({status:'update successful '});
+        }
+      }catch (err) {
+        return res.status(500).json({status:'Internal server error'});
+      }
+      
   };
 
   const validate = (req, res) => {
@@ -137,12 +171,75 @@ const CustomerController = () => {
          });
          return res.status(200).json({ cart });
        }
+ 
 
       
     } catch (err) {
       console.log(err);
       return res.status(401).json({ status: 'Error' });
     }
+  };
+
+  const itemDeptCat = async (req, res) => {
+    const { department_id } = req.body;
+    var { category_id, product_id } = req.body;
+    try {
+      
+      if (!category_id | !department_id){
+          return res.status(401).json({status: 'Put in Category ID and Department ID'});
+      }
+      else{
+      const category = await Category.findOne({
+        where: {
+          category_id,
+          department_id,
+        }
+      });
+      if (!category){
+        return res.status(401).json({status: 'No category with this selection criteria'});
+      }
+
+      category_id = category.category_id;
+      const prod_cat = await Prod_cat.findAll({
+        where: {
+          category_id,
+        }
+      });
+
+      for (i=0; i<prod_cat.length; i++) {
+        product_id = prod_cat[i].product_id;
+        // console.log(prod_cat[i] + i + ' log.................');
+        console.log(prod_cat.length);
+        var product = await Product.findOne({
+      where: {
+        product_id,
+      }
+    });
+    //  object = product;
+     output_prod.push(product);
+    }
+    
+    // console.log(output_prod);
+     if (!output_prod) {
+       return res.status(400).json({ status: 'No Item Found' });
+     } 
+
+    return res.status(200).json({ output_prod });
+      }
+
+      
+      
+      // console.log(category);
+      // console.log(Prod_cats)
+      // return res.status(200).json({ Prod_cat });
+      
+      
+    } catch (err) {
+      console.log(err);
+      return res.status(401).json({ status: 'Error' });
+    }
+    
+    
   };
 
   return {
@@ -152,6 +249,8 @@ const CustomerController = () => {
     getAll,
     getItem,
     addCart,
+    itemDeptCat,
+    updateProfile,
   };
 };
 
