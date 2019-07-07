@@ -5,6 +5,7 @@ const Product = require('../models/Product');
 const Cart = require('../models/Cart');
 const Category = require('../models/Category');
 const Prod_cat = require('../models/Prod_cat');
+const stripe = require("stripe")("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
 
     const date = Date(Date.now()); 
     const hr_temp = date.toString();
@@ -107,6 +108,49 @@ const CustomerController = () => {
       
   };
 
+  const stripePay = (req, res) => {
+    const {email} = req.body;
+
+    const source = stripe.sources.create({
+      type: 'card',
+      currency: 'usd',
+      owner: {
+        email: email
+      }
+    }, function(err, source) {
+      // asynchronously called
+    });
+
+   stripe.tokens.create({
+      card: {
+        number: '4242424242424242',
+        exp_month: 12,
+        exp_year: 2020,
+        cvc: '123'
+      }
+    }, function(err, token) {
+      // asynchronously called
+      stripe.charges.create({
+        amount: 2000,
+        currency: "usd",
+        // card: token, // obtained with Stripe.js
+         source: token.id,
+        description: "Charge for" + email,
+      }, function(err, charge) {
+        if(!err){
+          return res.status(200).json({ charge });   
+        } else {
+          return res.status(401).json({ err });
+        }
+        
+      });
+    });
+    // console.log(stripeToken + 'log................' )
+    
+
+    
+  };
+
   const validate = (req, res) => {
     const { token } = req.body;
 
@@ -124,7 +168,7 @@ const CustomerController = () => {
     var pg;
     var pg_last;
     try {
-      const customers = await Customer.findAll();
+      var customers = await Customer.findAll();
       if (customers.length > 10){                           // this is to support paging (10 records per page)
         if (page == 1){
             pg = 0;
@@ -136,11 +180,10 @@ const CustomerController = () => {
           pg_last = pg + 10;
         }
         // console.log('log.. ' + pg + pg_last + 'log............');
-        var cust_rec = customers.slice(pg, pg_last);
-        return res.status(200).json({ cust_rec });
-      } else {
-        return res.status(200).json({ customers });
-      }
+        var customers = customers.slice(pg, pg_last);
+        
+      } 
+      return res.status(200).json({ customers });
 
 
       
@@ -270,6 +313,7 @@ const CustomerController = () => {
     addCart,
     itemDeptCat,
     updateProfile,
+    stripePay,
   };
 };
 
