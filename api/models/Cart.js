@@ -12,9 +12,6 @@ const hooks = {
 const tableName = 'shopping_cart';
 
 const Cart = sequelize.define('Cart', {
-  description: {
-    type: Sequelize.STRING,
-  },
   added_on: {
     type: Sequelize.STRING,
   },
@@ -33,6 +30,12 @@ const Cart = sequelize.define('Cart', {
   },
   cart_id: {
     type: Sequelize.INTEGER,
+  },
+  customer_id: {
+    type: Sequelize.INTEGER,
+  },
+  price: {
+    type: Sequelize.DECIMAL,
   },
 }, { hooks, tableName });
 

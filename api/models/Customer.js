@@ -40,6 +40,10 @@ const Customer = sequelize.define('Customer', {
   shipping_region_id: {
     type: Sequelize.INTEGER,
   },
+  customer_id: {
+    type: Sequelize.INTEGER,
+    unique: true,
+  },
 }, { hooks, tableName });
 
 // eslint-disable-next-line
