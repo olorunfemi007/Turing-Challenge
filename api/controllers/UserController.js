@@ -8,6 +8,8 @@ const Prod_cat = require('../models/Prod_cat');
 const stripe = require("stripe")("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
 const paypal = require('paypal-rest-sdk');
 const nodemailer = require('nodemailer');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const date = Date(Date.now());
 const hr_temp = date.toString();
@@ -31,7 +33,7 @@ const transporter = nodemailer.createTransport({
   requiresAuth: true,
   auth: {
     user: 'olorunfemikawonise@rocketmail.com',
-    pass: 'expendable_007'
+    pass: ''
   }
 });
 
@@ -98,6 +100,24 @@ const CustomerController = () => {
     return res.status(400).json({ msg: 'Bad Request: Email or password is wrong' });
   };
 
+  const socialLogin = (req, res) => {
+    const { email, password } = req.body;
+    passport.use(new GoogleStrategy({
+      clientID: '328771766859-7qjmj8ua6nb17neo2e4e51ac55tlbftp.apps.googleusercontent.com',
+      clientSecret: 'ZhJIQwSPN0mQWKjavlB3ADYC',
+      callbackURL: "http://www.example.com/auth/google/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+         User.findOrCreate({ googleId: profile.id }, function (err, user) {
+           console.log(user);
+           return done(err, user);
+         });
+    }
+  ));
+
+  passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' });
+
+  };
   const updateProfile = async (req, res) => {
     const { email, name, region, country } = req.body;
 
@@ -188,7 +208,7 @@ const CustomerController = () => {
         if (!err) {
           var mailOptions = {
             from: 'olorunfemikawonise@rocketmail.com',
-            to: 'olorunfemikawonise@gmail.com',
+            to: email,
             subject: 'Turing Order Invoice',
             text: email_text
           };
@@ -295,7 +315,7 @@ const CustomerController = () => {
         res.status(200).json({ payment });
         var mailOptions = {
           from: 'olorunfemikawonise@rocketmail.com',
-          to: 'olorunfemikawonise@gmail.com',
+          to: email,
           subject: 'Turing Order Invoice',
           text: email_text
         };
@@ -390,7 +410,6 @@ const CustomerController = () => {
       if (!product) {
         return res.status(400).json({ status: 'No Item Found' });
       } else {
-        console.log(customer.customer_id + "------------+++++++++++++++++");
         const cart = await Cart.create({
           //  attribute: attributes,
           product_id: product.product_id,
@@ -485,6 +504,7 @@ const CustomerController = () => {
     updateProfile,
     stripePay,
     paypalPay,
+    socialLogin,
   };
 };
 
